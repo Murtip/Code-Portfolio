@@ -1,0 +1,99 @@
+---
+title: "EXPLORATORY DATA ANALYSIS"
+Name : Murtip Gajjar 
+Date : May 20 
+output: word_document
+
+---
+
+
+EXPLORATORY DATA ANALYSIS
+one of the goal of exploratory data analysis helps to understand the data and reasoning about the research question.
+This chapter have some informal checklist of things needed to be done when performing an exploratory data analysis. Given a certain dataset and we are asked to perform exploratory data analysis we follow the folowing steps;
+
+4.1 FORMULATE THE QUESTION 
+Formulating the question helps in this type of analysis. it limits the number ofanalysis that can be performed with any sizebale dataset.When given a certain dataset, firstly, have a morespecific question you want to answer
+
+4.2 READ IN SOME DATA
+In most cases the data come in a very messy format andits need to be cleaned. The data maybe in different fromat such as csv file, excel, spss. An appropriate library is needed to read the data
+
+---
+```{r}
+library(readr)
+X <- read_csv("data",
+              col_types = "")
+```
+
+The code above assume the dataset is in a CSV file. Therefore, we use a package called readr to read the data and store it in object X. Also, we are required to provide the character string to the col_types argumets specifing the classes of each column in that dataset.For example, we use "c" for character, "i" for integer, "n" for numeric
+To rewrite the names of the column without the space we use the following code
+```{r}
+names(X) <- make.names(names(X))
+```
+
+
+4.3 checking how the dataset is packaged
+Before we start to analyse the data, its good we check how the dataset is packed. For example, we check the number of rows and columns using the following code
+```{r}
+nrow(X)
+
+ncol(X)
+
+```
+we can use the result abtained above to compare whether the number of printed columns and row is equal to the number of columns and rows in the oringinal file
+
+4.4 RUN str() ON THE DATASET
+
+```{r}
+str(x)
+```
+
+This function summarizes the charactristic of the data.its also duplicates some information abtained earlier.
+
+4.5 CHECK THE TOP AND BOTTOM OF THE DATASET
+
+This helps to check whether everything was formatted correctly. Also, it helps the analyst to identify any missing information.
+
+```{r}
+head(X[, c()])
+
+tail(X[, c()])
+```
+the head() helps to analyse the topof the data and the tail() helps to read the dataset at the bottom.
+
+4.6 CHECK THE TOTAL COUNT
+This helps you to confirm the size of the data you are using. For example, we can be able to show the total number of respondent interviewed.
+
+```{r}
+table()
+```
+
+we use table() to summarize the a given column.
+
+```{r}
+library(dplyr)
+filter() %>% 
+         select()
+```
+
+The code above is used to filter some data to give some specific observations
+
+4.7 VALIDATE THE RESULTS USING AT LEAST ONE EXTERNAL DATA
+its good to make sure the data and the results matches something outside the dataset used. it helps to identify any error which may occur. we validate the results different ways. For example, we can use the summary() and quantile() to check the distribution and the decile of the data.
+```{r}
+summary()
+quantile()
+```
+
+4.8 FIRST SOLVE THE EASIEST QUESTION
+
+Using the research question of the analysis, we can think of the simplest answer. check whether the question was answered in any of the code above and summarize the solution.
+
+4.9 CHALLENGE YOUR SOLUTION
+if the result obtained comport with the prior expection, its advisable to challenge your solutions. This can be done by bootstarping a sample. This dataset should share same qualities with the original data by its randomly generated.
+Use the new dataset and run the anlysis again and compare the results.
+
+4.1 HAVE SOME FOLLOW UP QUESTIONS
+In this analysis is always far from perfect ecause we did not use any specific dataset, but it helps us to understand the research question and dataset.its good to focus some few follow up questions;
+check whether you have the right dataset
+decide whether you need additional data
+check whether you have the right question

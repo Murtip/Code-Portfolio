@@ -1,0 +1,103 @@
+---
+title: "Data transformation"
+Name : Murtip Gajjar 
+Date : June 15
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##PREREQUISITES
+We’ll illustrate the key ideas using data from the nycflights13 package, and use ggplot2 to help us understand the data.
+
+```{r eval=FALSE, include=FALSE}
+library(nycflights13)
+library(tidyverse)
+```
+
+#Filter rows with 
+##FILTER()
+filter() allows you to subset observations based on their values. The first argument is the name of the data frame. The second and subsequent arguments are the expressions that filter the data frame.
+```{r eval=FALSE, include=FALSE}
+filter()
+```
+
+When you run that line of code, dplyr executes the filtering operation and returns a new data frame. dplyr functions never modify their inputs
+##missing value
+If you want to determine if a value is missing, use is.na():
+```{r eval=FALSE, include=FALSE}
+is.na()
+```
+
+#Arrange rows with 
+##arrange()
+
+arrange() works similarly to filter() except that instead of selecting rows, it changes their order. It takes a data frame and a set of column names (or more complicated expressions) to order by. 
+
+```{r eval=FALSE, include=FALSE}
+arrange()
+```
+
+we use desc() to re-order by a column in descending order
+```{r eval=FALSE, include=FALSE}
+arrange(,desc())
+```
+
+#Select columns with 
+##select()
+
+The select function is used as follows
+```{r eval=FALSE, include=FALSE}
+select()
+```
+
+#Add new variables with 
+##mutate()
+Using the mutate() select sets of existing columns, it’s often useful to add new columns that are functions of existing columns.
+
+```{r}
+flights_sml <- select(, 
+  
+  ends_with(""), 
+  
+)
+mutate(flights_sml,
+  
+)
+```
+
+#Grouped summaries with 
+##summarise()
+The last key verb is summarise(). It collapses a data frame to a single row:
+```{r eval=FALSE, include=FALSE}
+summarise()
+
+```
+summarise() is not terribly useful unless we pair it with group_by(). This changes the unit of analysis from the complete dataset to individual groups.
+```{r eval=FALSE, include=FALSE}
+x<- group_by()
+  summarise()
+
+```
+
+##Combining multiple operations with the pipe
+
+```{r eval=FALSE, include=FALSE}
+delays <- xx %>% 
+  group_by(dest) %>% 
+  summarise(
+    count = n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  ) %>% 
+  filter(count > 20, dest != "HNL")
+```
+
+
+x %>% f(y) turns into f(x, y), and x %>% f(y) %>% g(z) turns into g(f(x, y), z) and so on. You can use the pipe to rewrite multiple operations in a way that you can read left-to-right, top-to-bottom. 
+
+
+
+

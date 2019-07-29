@@ -1,0 +1,79 @@
+---
+title: "Principal Component Analysis in R"
+Name : Murtip Gajjar 
+Date : July 17 
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Compute the Principal Components
+#PCA work best with numerical data. For example
+
+```{r}
+mtcars.pca <- prcomp(mtcars[,c(1:7,10,11)], center = TRUE,scale. = TRUE)
+
+summary(mtcars.pca)
+
+```
+#Let's call str() to have a look at your PCA object.
+```{r}
+str(mtcars.pca)
+```
+#From the result above, we can note the following
+
+#The center point ($center), scaling ($scale), standard deviation(sdev) of each principal component
+#The relationship (correlation or anticorrelation, etc) between the initial variables and the principal components ($rotation)
+#The values of each sample in terms of the principal components ($x)
+##PLOTTING PCA
+
+#Install the ggbiplot
+```{r eval=FALSE, include=FALSE}
+library(devtools)
+install_github("vqv/ggbiplot")
+```
+
+
+```{r eval=FALSE, include=FALSE}
+library(ggbiplot)
+
+ggbiplot(mtcars.pca)
+```
+
+##Graphical parameters with ggbiplot
+#There are also some other variables you can play with to alter your biplots. You can add a circle to the center of the dataset (circle argument):
+```{r eval=FALSE, include=FALSE}
+ggbiplot(mtcars.pca,ellipse=TRUE,circle=TRUE, labels=rownames(mtcars), groups=mtcars.country)
+```
+
+##Project a new sample onto the original PCA
+#rbind() the projected values for spacecar to the rest of the pca$x matrix and pass this to ggbiplot as before:
+```{r eval=FALSE, include=FALSE}
+s.sc <- scale(t(spacecar[c(1:7,10,11)]), center= mtcars.pca$center)
+s.pred <- s.sc %*% mtcars.pca$rotation
+
+
+mtcars.plusproj.pca <- mtcars.pca
+mtcars.plusproj.pca$x <- rbind(mtcars.plusproj.pca$x, s.pred)
+
+
+ggbiplot(mtcars.plusproj.pca, obs.scale = 1, var.scale = 1, ellipse = TRUE, circle = FALSE, var.axes=TRUE, labels=c(rownames(mtcars), "spacecar"), groups=mtcars.countryplus)+
+  scale_colour_manual(name="Origin", values= c("forest green", "red3", "violet", "dark blue"))+
+  ggtitle("PCA of mtcars dataset, with extra sample projected")+
+  theme_minimal()+
+  theme(legend.position = "bottom")
+```
+
+#This result is drastically different. Note that all the other samples are back in their initial positions, while spacecar is placed somewhat near the middle. Your extra sample is no longer skewing the overall distribution, but it can't be assigned to a particular group.
+
+
+
+
+
+
+
+
+
+

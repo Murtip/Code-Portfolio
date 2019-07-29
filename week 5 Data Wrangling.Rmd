@@ -1,0 +1,83 @@
+---
+title: "TIDY DATA"
+Name : " Murtip Gajjar "
+date: May 27 
+output: word_document
+---
+In this chapter we check how we can organise data in R using tidy. This helps to have the required format so that the data can be analysed effeciently. Using the tidy data and the tidy tools we easily change the data representation in much less time.
+
+PREREQUISITES
+This capter uses on tidyr. tidyr is a member of tidyverse. This a package that have various tools that helps in tidying the data.
+```{r}
+library(tidyverse)
+```
+
+For any tidy dataset;
+Each variable and observation should have its own column and row respectively.
+
+SPREADING AND GATHERING
+Most of the data encoutered are untidy this means for most analysis you will need to do some tidying. In most cases one variable is usually spread across multiple columns and the observation scattered across multiple rows. to fix this we use gather() and spread() fuction.
+
+GATHERING 
+
+```{r}
+gather("","", key = "",value = "")
+```
+
+when the columns are many we use the dplyr::select() style notation. After running the above function, the gahered
+columns are replaced by the new key and value columns
+
+when we want to combine several tidied tables we use dplyr::left_join() as follows
+
+```{r}
+tid <- table1 %>% 
+  gather(``, ``, key = "", value = "")
+
+tidb <- table2 %>% 
+  gather(``, ``, key = "", value = "")
+
+left_join(tid, tidb)
+
+```
+
+SPREADING
+We use spreading when the observations are spread across multiple rows
+```{r}
+spread(key = '', value = '')
+
+```
+
+SEPARATING AND UNITING
+
+The separate() function helps in putting one column into multiple columns. It uses a separate character appears.
+
+```{r}
+separate()
+```
+
+By default, this fuction splits values whenever there is a character that is not a number or a letter.
+
+The unite() fuction is the opposite of separate(). it is used to combine multiple columns into a single column
+```{r}
+unite()
+```
+
+
+MISSING VALUES
+In any data, a missing value may be in two ways; Explicitly and Implicitly
+In some representation, explicit missing value may not be important, we can replace gather() with na.rm = TRUE or by using the complete fuction
+```{r}
+complete()
+```
+This fuction takes a given column and finds any unique combinations. Besides, you can also use the fill fuction to fill in these missing values
+```{r}
+fill()
+```
+
+
+
+
+
+
+
+

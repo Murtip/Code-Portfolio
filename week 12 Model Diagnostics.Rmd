@@ -1,0 +1,265 @@
+---
+title: "Model Diagnostics"
+Name : Murtip Gajjar 
+Date : July 20
+output: html_document
+---
+
+# Model Diagnostics
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(cache = TRUE, autodep = TRUE, fig.align = "center")
+```
+
+
+**linear regression assumptions**,
+
+- **L**inearity
+- **I**ndependence
+- **N**ormality
+- **E**qual Variance
+
+
+
+## Checking Assumptions
+
+
+#Using the following three model we use certain tools to linear model
+
+\[
+\text{Model 1:} \quad Y = 3 + 5x + \epsilon, \quad \epsilon \sim N(0, 1)
+\]
+
+\[
+\text{Model 2:} \quad Y = 3 + 5x + \epsilon, \quad \epsilon \sim N(0, x^2)
+\]
+
+\[
+\text{Model 3:} \quad Y = 3 + 5x^2 + \epsilon, \quad \epsilon \sim N(0, 25)
+\]
+
+```{r}
+sim_1 = function(sample_size = 500) {
+  x = runif(n = sample_size) * 5
+  y = 3 + 5 * x + rnorm(n = sample_size, mean = 0, sd = 1)
+  data.frame(x, y)
+}
+
+sim_2 = function(sample_size = 500) {
+  x = runif(n = sample_size) * 5
+  y = 3 + 5 * x + rnorm(n = sample_size, mean = 0, sd = x)
+  data.frame(x, y)
+}
+
+sim_3 = function(sample_size = 500) {
+  x = runif(n = sample_size) * 5
+  y = 3 + 5 * x ^ 2 + rnorm(n = sample_size, mean = 0, sd = 5)
+  data.frame(x, y)
+}
+```
+
+### Fitted versus Residuals Plot
+#To check for linearity and constant variance we use the fitted vs the residuals plot
+
+```{r}
+set.seed(42)
+sim_data_1 = sim_1()
+head(sim_data_1)
+```
+
+#We then fit the model and add the fitted line to a scatterplot.
+
+```{r}
+plot(y ~ x, data = sim_data_1, col = "grey", pch = 20,
+     main = "Data from Model 1")
+fit_1 = lm(y ~ x, data = sim_data_1)
+abline(fit_1, col = "darkorange", lwd = 3)
+```
+
+#We now plot a fitted versus residuals 
+```{r}
+plot(fitted(fit_1), resid(fit_1), col = "grey", pch = 20,
+     xlab = "Fitted", ylab = "Residuals", main = "Data from Model 1")
+abline(h = 0, col = "darkorange", lwd = 2)
+```
+
+#We should look for two things in this plot.
+
+#- At any fitted value, the mean of the residuals should be roughly 0. If this is the case, the *linearity* assumption is valid. For this reason, we generally add a horizontal line at $y = 0$ to emphasize this point.
+- At every fitted value, the spread of the residuals should be roughly the same. If this is the case, the *constant variance* assumption is valid.
+
+#Here we see this is the case for both.
+
+
+```{r eval=FALSE, include=FALSE}
+plot(fitted(fit_2), resid(fit_2), col = "grey", pch = 20,
+     xlab = "Fitted", ylab = "Residuals", main = "Data from Model 2")
+abline(h = 0, col = "darkorange", lwd = 2)
+```
+
+#On the fitted versus residuals plot, we see two things very clearly. For any fitted value, the residuals seem roughly centered at 0. This is good! The linearity assumption is not violated. However, we also see very clearly, that for larger fitted values, the spread of the residuals is larger. This is bad! The constant variance assumption is violated here.
+
+#Now we will demonstrate a model which does not meet the linearity assumption. Model 3 is an example of a model where $Y$ is not a linear combination of the predictors. In this case the predictor is $x$, but the model uses $x^2$. (We'll see later that this is something that a "linear" model can deal with. The fix is simple, just make $x^2$ a predictor!)
+
+```{r}
+set.seed(42)
+sim_data_3 = sim_3()
+fit_3 = lm(y ~ x, data = sim_data_3)
+plot(y ~ x, data = sim_data_3, col = "grey", pch = 20,
+     main = "Data from Model 3")
+abline(fit_3, col = "darkorange", lwd = 3)
+```
+
+
+
+### Breusch-Pagan Test
+
+
+#The Breusch-Pagan Test can not be performed by default in `R`, however the function `bptest` in the `lmtest` package implements the test.
+
+```{r message=FALSE, warning=FALSE}
+#install.packages("lmtest")
+library(lmtest)
+```
+
+#Let's try it on the three models we fit above. Recall,
+
+- `fit_1` had no violation of assumptions,
+- `fit_2` violated the constant variance assumption, but not linearity,
+- `fit_3` violated linearity, but not constant variance.
+
+```{r eval=FALSE, include=FALSE}
+bptest(fit_1)
+```
+
+#For `fit_1` we see a large p-value, so we do not reject the null of homoscedasticity, which is what we would expect.
+
+```{r eval=FALSE, include=FALSE}
+bptest(fit_2)
+```
+
+#For `fit_2` we see a small p-value, so we reject the null of homoscedasticity. The constant variance assumption is violated. This matches our findings with a fitted versus residuals plot.
+
+```{r eval=FALSE, include=FALSE}
+bptest(fit_3)
+```
+
+#Lastly, for `fit_3` we again see a large p-value, so we do not reject the null of homoscedasticity, which matches our findings with a fitted versus residuals plot.
+
+### Histograms
+
+
+```{r, fig.height=5, fig.width=15}
+par(mfrow = c(1, 3))
+hist(resid(fit_1),
+     xlab   = "Residuals",
+     main   = "Histogram of Residuals, fit_1",
+     col    = "darkorange",
+     border = "dodgerblue",
+     breaks = 20)
+
+```
+
+# `fit_2` is not as clear. It does have a rough bell shape, however, it also has a very sharp peak. For this reason we will usually use more powerful tools such as **Q-Q plots** and the **Shapiro-Wilk test** for assessing the normality of errors.
+
+### Q-Q Plots
+
+#Another visual method for assessing the normality of errors, which is more powerful than a histogram, is a normal quantile-quantile plot, or **Q-Q plot** for short.
+
+#In `R` these are very easy to make. The `qqnorm()` function plots the points, and the `qqline()` function adds the necessary line. We create a Q-Q plot for the residuals of `fit_1` to check if the errors could truly be normally distributed.
+
+
+
+
+#Also, to get a better idea of how Q-Q plots work, here is a quick function which creates a Q-Q plot:
+
+```{r}
+qq_plot = function(e) {
+
+  n = length(e)
+  normal_quantiles = qnorm(((1:n - 0.5) / n))
+  # normal_quantiles = qnorm(((1:n) / (n + 1)))
+
+  # plot theoretical verus observed quantiles
+  plot(normal_quantiles, sort(e),
+       xlab = c("Theoretical Quantiles"),
+       ylab = c("Sample Quantiles"),
+       col = "darkgrey")
+  title("Normal Q-Q Plot")
+
+  # calculate line through the first and third quartiles
+  slope     = (quantile(e, 0.75) - quantile(e, 0.25)) / (qnorm(0.75) - qnorm(0.25))
+  intercept = quantile(e, 0.25) - slope * qnorm(0.25)
+
+  # add to existing plot
+  abline(intercept, slope, lty = 2, lwd = 2, col = "dodgerblue")
+}
+```
+
+
+
+#Returning to our three regressions, recall,
+
+- `fit_1` had no violation of assumptions,
+- `fit_2` violated the constant variance assumption, but not linearity,
+- `fit_3` violated linearity, but not constant variance.
+
+#We'll now create a Q-Q plot for each to assess normality of errors.
+
+```{r}
+qqnorm(resid(fit_1), main = "Normal Q-Q Plot, fit_1", col = "darkgrey")
+qqline(resid(fit_1), col = "dodgerblue", lwd = 2)
+```
+
+#For `fit_1`, we have a near perfect Q-Q plot. We would believe the errors follow a normal distribution.
+
+```{r eval=FALSE, include=FALSE}
+qqnorm(resid(fit_2), main = "Normal Q-Q Plot, fit_2", col = "darkgrey")
+qqline(resid(fit_2), col = "dodgerblue", lwd = 2)
+```
+
+#For `fit_2`, we have a suspect Q-Q plot. We would probably **not** believe the errors follow a normal distribution.
+
+```{r eval=FALSE, include=FALSE}
+qqnorm(resid(fit_3), main = "Normal Q-Q Plot, fit_3", col = "darkgrey")
+qqline(resid(fit_3), col = "dodgerblue", lwd = 2)
+```
+
+#Lastly, for `fit_3`, we again have a suspect Q-Q plot. We would probably **not** believe the errors follow a normal distribution.
+
+### Shapiro-Wilk Test
+
+#Histograms and Q-Q Plots give a nice visual representation of the residuals distribution, however if we are interested in formal testing, there are a number of options available. A commonly used test is the **Shapiro–Wilk test**, which is implemented in `R`.
+
+```{r}
+set.seed(42)
+shapiro.test(rnorm(25))
+shapiro.test(rexp(25))
+```
+
+#This gives us the value of the test statistic and its p-value. The null hypothesis assumes the data were sampled from a normal distribution, thus a small p-value indicates we believe there is only a small probability the data could have been sampled from a normal distribution.
+
+
+### Leverage
+
+#A data point with high **leverage**, is a data point that *could* have a large influence when fitting the model.
+
+
+
+#There are multiple ways to find leverages in `R`.
+
+```{r}
+lev_ex = data.frame(
+  x1 = c(0, 11, 11, 7, 4, 10, 5, 8),
+  x2 = c(1, 5, 4, 3, 1, 4, 4, 2),
+  y  = c(11, 15, 13, 14, 0, 19, 16, 8))
+
+plot(x2 ~ x1, data = lev_ex, cex = 2)
+points(7, 3, pch = 20, col = "red", cex = 2)
+```
+
+#Here we've created some multivariate data. Notice that we have plotted the $x$ values, not the $y$ values. The red point is $(7, 3)$ which is the mean of `x1` and the mean of `x2` respectively.
+
+
+
+

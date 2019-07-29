@@ -1,0 +1,58 @@
+---
+title: "GRAPHICS DEVICES"
+Name: Murtip Gajjar
+Date: Jun 29
+output: word_document
+---
+HOW TO GENERATE A PLOT
+
+FIRST APPROACH
+
+Call a plotting function using either plot, xyplot, qplot
+
+```{r}
+with(faithful, plot(eruptions,waiting))
+title(main = "Old Faithful Geyser data") 
+```
+
+the plot will appear in the screen
+Annotate the generated plot with a title
+
+SECOND APPROACH
+Open the pdf device and create it in the working directory
+create the plot and sendit to the created file
+Annotate the plot with title
+finally, close the PDF file device
+
+
+```{r}
+
+pdf(file = "myplot.pdf")  
+
+
+ with(faithful, plot(eruptions, waiting))  
+ 
+
+ title(main = "Old Faithful Geyser data")  
+
+ dev.off()  
+
+```
+
+COPY THE PLOTS TO ANOTHER DEVICE
+We use the dev.copy() to copy plots from one device to another. while dev.copy2pdf() is used to copy a plot from the current device to PDF file.
+
+```{r}
+ library(datasets)
+
+ with(faithful, plot(eruptions, waiting))  
+
+ title(main = "Old Faithful Geyser data")  
+
+ dev.copy(png, file = "geyserplot.png")  
+
+ dev.off() 
+```
+
+
+

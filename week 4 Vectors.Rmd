@@ -1,0 +1,111 @@
+---
+title: "VECTORS"
+
+Name : "Murtip Gajjar "
+Date : "May 18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+VECTOR BASICS
+
+We use library(tidyverse) to handle vectors
+```{r eval=FALSE, include=FALSE}
+library(tidyverse)
+```
+
+Every vector has two key properties:
+
+Its type, which you can determine with typeof()
+Its length, which you can determine with length()
+
+##RECURSIVE VECTORS (lists)
+
+We usually creates a list with list()
+
+```{r eval=FALSE, include=FALSE}
+x<- list()
+```
+A very useful tool for working with lists is str() because it focusses on the structure, not the contents.
+
+```{r}
+str()
+x<- list()
+```
+
+##Visualising lists
+
+```{r}
+x1 <- list(c(1, 2), c(3, 4))
+x2 <- list(list(1, 2), list(3, 4))
+x3 <- list(1, list(2, list(3)))
+```
+
+##SUBSETTING
+There are three ways to subset a list, which I’ll illustrate with a list named a:
+
+```{r}
+a <- list(a = 1:3, b = "a string", c = pi, d = list(-1, -5))
+```
+extracts a sub-list. The result will always be a list.
+
+##Attributes
+Any vector can contain arbitrary additional metadata through its attributes. You can think of attributes as named list of vectors that can be attached to any object. You can get and set individual attribute values with attr() or see them all at once with attributes().
+
+```{r}
+x <- 1:10
+attr(x, "greeting")
+#> NULL
+attr(x, "greeting") <- "Hi!"
+attr(x, "farewell") <- "Bye!"
+attributes(x)
+
+```
+
+There are three very important attributes that are used to implement fundamental parts of R:
+
+Names are used to name the elements of a vector.
+Dimensions (dims, for short) make a vector behave like a matrix or array.
+Class is used to implement the S3 object oriented system.
+
+
+Here’s what a typical generic function looks like:
+```{r}
+as.Date
+```
+The call to “UseMethod” means that this is a generic function, and it will call a specific method, a function, based on the class of the first argument
+
+```{r eval=FALSE, include=FALSE}
+methods("as.Date")
+```
+
+For example, if x is a character vector, as.Date() will call as.Date.character(); if it’s a factor, it’ll call as.Date.factor().
+
+You can see the specific implementation of a method with getS3method():
+
+```{r eval=FALSE, include=FALSE}
+getS3method("as.Date", "default")
+```
+##Tibbles
+
+Tibbles are augmented lists: they have class “tbl_df” + “tbl” + “data.frame”, and names (column) and row.names attributes:
+
+```{r eval=FALSE, include=FALSE}
+tb <- tibble::tibble(x = 1:5, y = 5:1)
+typeof(tb)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+
+df <- data.frame(x = 1:5, y = 5:1)
+typeof(df)
+
+attributes()
+```
+
+The main difference is the class. The class of tibble includes “data.frame” which means tibbles inherit the regular data frame behaviour by default.
+

@@ -1,0 +1,96 @@
+---
+title: "DATA VISUALIZATION"
+Name : Murtip Gajjar 
+Date : June 27
+output: word_document
+---
+
+DATA VISUALISATION
+In this chapter we use the ggplot2 to visualize the data. it is one of the best elegant and most versatile function to use when visualising the data. its one of the core members of tidyverse.
+we will use the following dataframe to found in ggplot2.
+
+```{r}
+ggplot2::mpg
+```
+creating a ggplot
+we use the following code to plot mpg and put 'disp' on the x-axis and 'hwy' on the y-axis
+```{r}
+library(tidyverse)
+ggplot2::mpg
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+using the ggplot2, we begin a plot using ggplot() which creates a coordinate system that can be added a layer to it.
+The geom_point() helps to add a layer of points to the plot which results to a scatterplot.
+
+a graphing template
+we can turn this code into a reusable tempalate for making graphs using the ggplot2 as follows
+```{r}
+ggplot(data = DATA) + 
+  GEOM_FUNCTION>(mapping = aes(MAPPINGS))
+```
+
+AESTHETIC MAPPINGS
+we can use the code below to convey information on the mpg data by mapping the aesthetics in the plot to the given variables in the dataset.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+we associate the name of the variable i side aes(). The ggplot2 will add a unique color. Also the ggplot2 will add a legend that explains which level correspond to which level
+
+USING FACETS
+aesthetic can be used to add additional variables.Besides, the plot of categorical variables can be split into facets, where each subplots display only one subset of the data. we can use facet_wrap () tofacet the plot by a single variable as shown below
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+
+we can add facet_grid() to the plot call to facet the plot on the combination of two variables. as shown below
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid(drv ~ cyl)
+```
+
+GEOMETRIC OBJECTS
+ A geom is the geometric object that plots use to represent the intended data.Every geam function takesa mapping argument but not all aesthetic work with every geom. This is clearly shown in the code below
+```{r}
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+```
+ 
+STATISTICAL TRANSFORMATION
+ In this chapter we will use the bar charts. Bar charts usually reveals something subtle about the plots.
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut))
+```
+The dataset is obtained from the ggplot2. the x-axis and y-axis displays cut and the count respectively.
+
+POSITION ADJUSTMENTS
+Bar charts can be colored by either using colour aesthetic or fill as shown below
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, colour = cut))
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = cut))
+```
+If we happen to fill aesthetic to another variable like using clarity(), the bars will be stacked
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+```
+
+
+
+
+
+
+
+
+
+
